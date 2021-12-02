@@ -3,13 +3,13 @@
 import pkg_resources
 import pytest
 
-from aoc2021.d1 import parse_input, count_incr_steps, part1, part2
+from aoc2021.d1 import parse, count_incr_steps, part1, part2
 
 
 @pytest.fixture
 def sample():
     filename = pkg_resources.resource_filename(__name__, "data/sample_d1.txt")
-    return parse_input(filename)
+    return parse(filename)
 
 
 def test_count(sample):

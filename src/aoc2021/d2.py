@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
 from dataclasses import dataclass
+from typing import TypeAlias
 from aoc2021 import DATAPATH
 
+Command: TypeAlias = tuple[str, int]
 
 @dataclass
 class Position:
@@ -10,46 +12,50 @@ class Position:
     depth: int = 0
     aim: int = 0 # needed for part 2
 
-def compute_position_part1(filename: str) -> Position:
+
+def compute_position_part1(commands: list[Command]) -> Position:
     pos = Position()
-    with open(filename) as f:
-        for command in f:
-            direction, steps = command.split()
-            match direction, steps: 
-                case "forward", x:
-                    pos.horizontal += int(x)
-                case "down", x:
-                    pos.depth += int(x)
-                case "up", x:
-                    pos.depth -= int(x)
+    for direction, units in commands:
+        match direction, units: 
+            case "forward", x:
+                pos.horizontal += x
+            case "down", x:
+                pos.depth += x
+            case "up", x:
+                pos.depth -= x
     return pos
 
-def compute_position_part2(filename: str) -> Position:
+
+def compute_position_part2(commands: list[Command]) -> Position:
     pos = Position()
-    with open(filename) as f:
-        for command in f:
-            direction, steps = command.split()
-            match direction, steps: 
-                case "forward", x:
-                    x = int(x)
-                    pos.horizontal += x
-                    pos.depth += pos.aim * x
-                case "down", x:
-                    pos.aim += int(x)
-                case "up", x:
-                    pos.aim -= int(x)
+    for direction, units in commands:
+        match direction, units: 
+            case "forward", x:
+                pos.horizontal += x
+                pos.depth += pos.aim * x
+            case "down", x:
+                pos.aim += x
+            case "up", x:
+                pos.aim -= x
     return pos
+
+def parse(filename: str) -> list[Command]:
+    with open(filename) as f:
+        fields = [x.split() for x in f]
+        commands = [(direction, int(steps)) for direction, steps in fields]
+    return commands
 
 def main():
     filename = DATAPATH.joinpath("input_d2.txt")
+    commands: list[Command] = parse(filename)
 
     # part 1
-    pos: Position = compute_position_part1(filename)
+    pos: Position = compute_position_part1(commands)
     print(pos)
     print(pos.horizontal * pos.depth)
 
     # part 2
-    pos: Position = compute_position_part2(filename)
+    pos: Position = compute_position_part2(commands)
     print(pos)
     print(pos.horizontal * pos.depth)
 
