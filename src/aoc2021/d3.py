@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
 from typing import Callable, Literal, TypeAlias
-from itertools import groupby
-from aoc2021 import DATAPATH, SAMPLEPATH
+from aoc2021 import DATAPATH
 
 bit: TypeAlias = Literal[0, 1]
 
