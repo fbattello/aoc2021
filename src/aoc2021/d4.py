@@ -19,6 +19,7 @@ class Board:
         self.squaresize = int(squaresize)
         self.rowmarkcounter: list[int] = [self.squaresize] * self.squaresize
         self.colmarkcounter: list[int] = [self.squaresize] * self.squaresize
+        self.has_wined: bool = False
 
     def lookup(self, number: int) -> Position:
         ix = self.grid.index(number)
@@ -26,11 +27,20 @@ class Board:
         irow = ix // self.squaresize
         return ix, irow, icol
 
+    def reset(self):
+        self.marked = [False] * self.size
+        self.rowmarkcounter = [self.squaresize] * self.squaresize
+        self.colmarkcounter = [self.squaresize] * self.squaresize
+
 
 class Bingo:
-    def __init__(self, draw: list[int], boards: list[Board]):
+    def __init__(
+        self, draw: list[int], boards: list[Board], keep_on_playing: bool = False
+    ):
         self.draw = draw
         self.boards = boards
+        self.keep_on_playing: bool = keep_on_playing
+        self.lastwin = None
 
     @classmethod
     def parse(cls, filename: str):
@@ -53,6 +63,8 @@ class Bingo:
     def play_turn(self, turn: int, n: int) -> Optional[Board]:
         winner: Board = None
         for b in self.boards:
+            if b.has_wined:
+                continue
             try:
                 ix, irow, icol = b.lookup(n)
                 b.marked[ix] = True
@@ -60,25 +72,33 @@ class Bingo:
                 b.colmarkcounter[icol] -= 1
                 if b.rowmarkcounter[irow] == 0 or b.colmarkcounter[icol] == 0:
                     winner = b
-                    break
+                    self.lastwin = b, n, turn
+                    winner.has_wined = True
+                    if not self.keep_on_playing:
+                        break
             except ValueError:
                 pass
         return winner
 
-    def play(self, maxturn: int = 0) -> tuple[Optional[Board], int, int]:
+    def play(self, *, maxturn: int = 0) -> tuple[Optional[Board], int, int]:
         draw = self.draw
         for turn, number in enumerate(draw, 1):
             winner = self.play_turn(turn, number)
-            if winner or turn == maxturn:
+            if (not self.keep_on_playing and winner) or turn == maxturn:
                 return winner, number, turn
         return None, number, turn
+
+    def reset(self):
+        for board in self.boards:
+            board.reset()
 
 
 def main():
     filename = DATAPATH.joinpath("input_d4.txt")
+    # filename = SAMPLEPATH.joinpath("sample_d4.txt")
     bingo = Bingo.parse(filename)
 
-    # part 1
+    print("Part 1")
     winner, number, turn = bingo.play()
     if winner:
         print(f"{winner=} {number=} {turn=}")
@@ -87,6 +107,17 @@ def main():
         print(total * number)
     else:
         print(f"{number=} {turn=}")
+
+    print("-" * 32)
+    print("Part 2")
+    bingo.reset()
+    bingo.keep_on_playing = True
+    bingo.play()
+    winner, number, turn = bingo.lastwin
+    print(f"{winner=} {number=} {turn=}")
+    total = sum(winner.grid[i] for i, x in enumerate(winner.marked) if not x)
+    print(f"{total=}")
+    print(total * number)
 
 
 if __name__ == "__main__":

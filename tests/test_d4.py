@@ -22,7 +22,7 @@ def test_parse():
 
 
 def test_turn5(bingo: Bingo):
-    bingo.play(5)
+    bingo.play(maxturn=5)
     marked: list[bool] = [False] * bingo.boards[0].size
     marked[0 * 5 + 3] = True  # 11
     marked[1 * 5 + 3] = True  # 4
@@ -34,7 +34,7 @@ def test_turn5(bingo: Bingo):
 
 
 def test_turn11(bingo: Bingo):
-    bingo.play(11)
+    bingo.play(maxturn=11)
     marked: list[bool] = [False] * bingo.boards[0].size
     marked[0 * 5 + 2] = True  # 17
     marked[0 * 5 + 3] = True  # 11
@@ -56,3 +56,17 @@ def test_game(bingo: Bingo):
     assert winner == bingo.boards[2]
     assert number == 24
     assert turn == 12
+    expected = sum(winner.grid[i] for i, x in enumerate(winner.marked) if not x) * number
+    assert expected == 4512
+
+
+def test_lastwin(bingo: Bingo):
+    bingo.keep_on_playing = True
+    bingo.play()
+    winner, number, turn = bingo.lastwin
+    assert winner == bingo.boards[1]
+    assert number == 13
+    assert turn == 15  
+    expected = sum(winner.grid[i] for i, x in enumerate(winner.marked) if not x) * number
+    assert expected == 1924
+    
