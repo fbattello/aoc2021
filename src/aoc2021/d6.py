@@ -44,7 +44,7 @@ def naive_model(school: list[int], days: int) -> int:
 
 
 def counter_model(school: list[int], days: int) -> int:
-    c = Counter(school)
+    c: Counter = Counter(school)
     for day in range(days):
         for i in range(0, 9):
             c[i - 1] = c[i]
