@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from dataclasses import dataclass
-from typing import overload
 from aoc2021 import DATAPATH, SAMPLEPATH
 import logging
 
