@@ -14,7 +14,6 @@ def main():
     filename = DATAPATH.joinpath("input_d7.txt")
     #filename = SAMPLEPATH.joinpath("sample_d7.txt")
     swarm = parse(filename)
-    print(swarm)
 
     # part 1
 
@@ -32,10 +31,9 @@ def main():
 
     barycentre = int(sum(positions) / len(positions))
     delta = 200
-    positions = [*range(barycentre-delta, barycentre+delta)] # this time explore all positions (around barycentre)
     minfuel = sys.maxsize
     cost = lambda n: int(n*(n+1)/2)
-    for pos in positions:
+    for pos in range(barycentre-delta, barycentre+delta): # this time explore all positions (around barycentre)
         fuel = sum([cost(abs(crab-pos)) for crab in swarm])
         if fuel < minfuel:
             target, minfuel = pos, fuel
