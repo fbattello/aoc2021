@@ -32,7 +32,7 @@ def main():
     barycentre = int(sum(positions) / len(positions))
     delta = 200
     minfuel = sys.maxsize
-    cost = lambda n: int(n*(n+1)/2)
+    cost = lambda n: n*(n+1)//2
     for pos in range(barycentre-delta, barycentre+delta): # this time explore all positions (around barycentre)
         fuel = sum([cost(abs(crab-pos)) for crab in swarm])
         if fuel < minfuel:
