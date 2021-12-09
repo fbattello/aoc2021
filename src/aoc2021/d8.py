@@ -98,11 +98,7 @@ def find_segments(patterns: list[str]) -> dict:
     set_acdg = {segmap["a"], segmap["c"], segmap["d"], segmap["g"]}
     segmap["e"] = [*set(digitmap[2]) - set_acdg][0]
 
-    reversedmap = {}
-    for k, v in segmap.items():
-        reversedmap[v] = k
-
-    return reversedmap
+    return {v:k for k, v in segmap.items()}
 
 
 def decode(digit: str, segmap: dict = None) -> int:
