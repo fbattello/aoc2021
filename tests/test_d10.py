@@ -23,7 +23,13 @@ corrupted = [
     r"<{([([[(<>()){}]>(<<{{",
 ]
 
-incomplete = [l for l in lines if l not in corrupted]
+incomplete = [  # [l for l in lines if l not in corrupted]
+    r"[({(<(())[]>[[{[]{<()<>>",
+    r"[(()[<>])]({[<{<<[]>>(",
+    r"(((({<>}<{<{<>}{[]{[]{}",
+    r"{<[[]]>}<{[{[{[]{()[[[]",
+    r"<{([{{}}[<[[[<>{}]]]>[]]",
+]
 
 
 def test_basic():
@@ -33,5 +39,30 @@ def test_basic():
 
 
 def test_parser():
-    scores = [parser(l) for l in lines]
+    scores = [parseline(l) for l in lines]
     assert scores == [0, 0, 1197, 0, 3, 57, 0, 3, 25137, 0]
+
+
+def test_autocomplete_line_4():
+    line = r"<{([{{}}[<[[[<>{}]]]>[]]"
+    assert autocomplete(line) == "])}>"
+
+
+def test_autocomplete_line_3():
+    line = r"{<[[]]>}<{[{[{[]{()[[[]"
+    assert autocomplete(line) == "]]}}]}]}>"
+
+
+def test_autocomplete_line_2():
+    line = r"(((({<>}<{<{<>}{[]{[]{}"
+    assert autocomplete(line) == "}}>}>))))"
+
+
+def test_autocomplete_line_1():
+    line = r"[(()[<>])]({[<{<<[]>>("
+    assert autocomplete(line) == ")}>]})"
+
+
+def test_autocomplete_line_0():
+    line = r"[({(<(())[]>[[{[]{<()<>>"
+    assert autocomplete(line) == "}}]])})]"
